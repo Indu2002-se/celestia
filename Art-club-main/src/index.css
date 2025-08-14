@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-light to-white min-h-screen font-sans;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-glass-gradient backdrop-blur-glass rounded-xl border border-white/20 shadow-glass;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/80 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-2 bg-secondary text-white font-medium rounded-lg hover:bg-secondary/80 transition-all;
+  }
+
+  .celestia-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+} 

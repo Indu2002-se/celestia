@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_ca21563bd53ad17537c9dbf6464b30d7db233df8",
+        "--project-url",
+        "https://mocdyrlqznqaulkwfkgi.supabase.co",
+        "--anon-key",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vY2R5cmxxem5xYXVsa3dma2dpIiwicm9cSI6ImFub24iLCJpYXQiOjE3NTUxNTQ3NTEsImV4cCI6MjA3MDczMDc1MX0.yrFlmY9RcMBdwpUOMPJxvYjPhMKJPCI3m-LcM8RmM9I"
+      ]
+    }
+  }
+} 
