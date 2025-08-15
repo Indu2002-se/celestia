@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiCalendar, FiMapPin, FiClock, FiUsers, FiShare2, FiCheckCircle, FiCamera } from 'react-icons/fi';
 import { supabase } from '../../supabaseClient';
@@ -306,6 +306,55 @@ const EventDetails = () => {
           >
             Back to Events
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user is authenticated
+  if (!user) {
+    return (
+      <div className="celestia-container my-10">
+        <div className="glass-card p-8 text-center">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-4">
+              🎬 Join Celestia Movie Festival
+            </h2>
+            <p className="text-lg text-gray-600 mb-6">
+              Create your account to book tickets for this amazing event!
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="text-lg font-semibold text-blue-800 mb-2">✨ What You'll Get:</h3>
+              <ul className="text-blue-700 space-y-1">
+                <li>• Access to exclusive movie screenings</li>
+                <li>• Photobooth packages with soft copy photos</li>
+                <li>• Complimentary popcorn and refreshments</li>
+                <li>• Professional event management</li>
+              </ul>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/register"
+                className="btn-primary px-8 py-3 text-lg"
+              >
+                Create Account
+              </Link>
+              <Link
+                to="/login"
+                className="btn-secondary px-8 py-3 text-lg"
+              >
+                Sign In
+              </Link>
+            </div>
+            
+            <p className="text-sm text-gray-500 mt-4">
+              Already have an account? Sign in to book your tickets!
+            </p>
+          </div>
         </div>
       </div>
     );
