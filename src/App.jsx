@@ -15,6 +15,7 @@ import Checkout from './components/pages/Checkout';
 import Confirmation from './components/pages/Confirmation';
 import Login from './components/pages/Login';
 import Register from './components/pages/Register';
+import EmailConfirmation from './components/pages/EmailConfirmation';
 import Profile from './components/pages/Profile';
 import NotFound from './components/pages/NotFound';
 
@@ -55,6 +56,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/events" element={<Events />} />
             <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/email-confirmation" element={<EmailConfirmation />} />
+            <Route path="/auth/callback" element={<EmailConfirmation />} />
             
             {/* Protected User Routes */}
             <Route 

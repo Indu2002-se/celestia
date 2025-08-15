@@ -86,7 +86,8 @@ const Register = () => {
         options: {
           data: {
             full_name: formData.fullName
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`
         }
       });
       
@@ -97,9 +98,8 @@ const Register = () => {
 
       console.log('Registration successful:', data);
       
-      // Show success message and redirect to login
-      alert('Registration successful! Please check your email to verify your account.');
-      navigate('/login');
+      // Redirect to email confirmation page
+      navigate(`/email-confirmation?email=${encodeURIComponent(formData.email)}`);
       
     } catch (error) {
       console.error('Error signing up:', error);
