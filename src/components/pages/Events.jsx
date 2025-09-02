@@ -71,14 +71,42 @@ const Events = () => {
   }, [authState]);
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (!dateString) return 'Invalid Date';
+    try {
+      // Handle the date string properly
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  };
+
+  const formatTime = (dateString) => {
+    if (!dateString) return 'Invalid Date';
+    try {
+      // Extract time from the date string and display as intended
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      
+      // Get the time components
+      const hours = date.getUTCHours();
+      const minutes = date.getUTCMinutes();
+      
+      // Format as 12-hour time
+      const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const minutesStr = minutes.toString().padStart(2, '0');
+      
+      return `${hour12}:${minutesStr} ${ampm}`;
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   const handleFilterChange = (e) => {
@@ -349,7 +377,7 @@ const Events = () => {
                 />
                 <div className="absolute bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent w-full p-4">
                   <div className="text-white font-semibold flex items-center">
-                    <FiCalendar className="mr-1" /> {formatDate(event.date)}
+                    <FiCalendar className="mr-1" /> {formatDate(event.date)} at {formatTime(event.date)}
                   </div>
                 </div>
               </div>

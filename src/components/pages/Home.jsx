@@ -107,14 +107,42 @@ const Home = () => {
   }, []);
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (!dateString) return 'Invalid Date';
+    try {
+      // Handle the date string properly
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  };
+
+  const formatTime = (dateString) => {
+    if (!dateString) return 'Invalid Date';
+    try {
+      // Extract time from the date string and display as intended
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      
+      // Get the time components
+      const hours = date.getUTCHours();
+      const minutes = date.getUTCMinutes();
+      
+      // Format as 12-hour time
+      const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const minutesStr = minutes.toString().padStart(2, '0');
+      
+      return `${hour12}:${minutesStr} ${ampm}`;
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   const getEventImage = (event) => {
@@ -216,7 +244,7 @@ const Home = () => {
                   <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
                   <div className="flex items-center text-gray-600 mb-4">
                     <FiCalendar className="mr-2" />
-                    <span>{formatDate(event.date)}</span>
+                    <span>{formatDate(event.date)} at {formatTime(event.date)}</span>
                   </div>
                   <div className="flex items-center text-gray-600 mb-4">
                     <FiMapPin className="mr-2" />

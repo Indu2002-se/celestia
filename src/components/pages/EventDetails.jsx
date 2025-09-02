@@ -89,18 +89,70 @@ const EventDetails = () => {
   }, [id]);
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    if (!dateString) return 'Invalid Date';
+    try {
+      // Handle the date string properly
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   const formatTime = (dateString) => {
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
+    if (!dateString) return 'Invalid Date';
+    try {
+      // Extract time from the date string and display as intended
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      
+      // Get the time components
+      const hours = date.getUTCHours();
+      const minutes = date.getUTCMinutes();
+      
+      // Format as 12-hour time
+      const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const minutesStr = minutes.toString().padStart(2, '0');
+      
+      return `${hour12}:${minutesStr} ${ampm}`;
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  };
+
+  const formatDescription = (description) => {
+    if (!description) return '';
+    
+    // Split by line breaks and format each line
+    return description.split('\n').map((line, index) => {
+      // If line starts with bullet point, format as list item
+      if (line.trim().startsWith('•')) {
+        return (
+          <div key={index} className="flex items-start mb-1">
+            <span className="text-primary mr-2 mt-1">•</span>
+            <span className="text-gray-700">{line.trim().substring(1).trim()}</span>
+          </div>
+        );
+      }
+      // If line is empty, add spacing
+      else if (line.trim() === '') {
+        return <div key={index} className="mb-2"></div>;
+      }
+      // Regular paragraph
+      else {
+        return (
+          <p key={index} className="text-gray-700 mb-2">
+            {line.trim()}
+          </p>
+        );
+      }
     });
   };
 
@@ -512,9 +564,9 @@ const EventDetails = () => {
         <div className="w-full lg:w-2/3">
           <div className="glass-card p-6 md:p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-4 text-dark">About This Event</h2>
-            <p className="text-gray-700 whitespace-pre-line mb-6">
-              {event.full_description || event.description}
-            </p>
+            <div className="mb-6">
+              {formatDescription(event.full_description || event.description)}
+            </div>
             
             <div className="flex flex-wrap gap-4 mb-6">
               <button 
