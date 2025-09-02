@@ -44,10 +44,8 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-semibold text-lg text-dark">Contact Us</h3>
             <div className="space-y-2 text-gray-600">
-              <p>University Art Department</p>
-              <p>Room 302, Arts Building</p>
+              <p>ICBT Campus, Gampaha</p>
               <p>Email: info@celestia.com</p>
-              <p>Phone: (123) 456-7890</p>
             </div>
             <div className="flex space-x-4 mt-4">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">
