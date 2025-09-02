@@ -168,9 +168,6 @@ const Home = () => {
                 <Link to="/events" className="btn-primary">
                   Browse Events
                 </Link>
-                <Link to="/register" className="px-6 py-2 bg-transparent border-2 border-primary text-primary font-medium rounded-lg hover:bg-primary hover:text-white transition-all">
-                  Join Celestia
-                </Link>
               </motion.div>
             </div>
             <div className="w-full md:w-1/2 h-64 md:h-auto relative">
@@ -260,9 +257,6 @@ const Home = () => {
                 <p className="text-gray-600">A supportive community where artists can connect, collaborate, and grow together.</p>
               </div>
             </div>
-            <Link to="/register" className="btn-primary inline-block">
-              Become a Member
-            </Link>
           </div>
         </div>
       </section>
