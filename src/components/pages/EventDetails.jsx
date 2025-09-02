@@ -474,45 +474,36 @@ const EventDetails = () => {
 
   return (
     <div className="celestia-container my-10">
-      {/* Hero Section */}
-      <div className="glass-card overflow-hidden mb-8">
-        <div className="relative h-64 md:h-96">
-          <img 
-            src={event.image_url} 
-            alt={event.title} 
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end">
-            <div className="p-6 md:p-8 w-full">
-              <motion.h1 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-3xl md:text-4xl font-bold text-white mb-2"
-              >
-                {event.title}
-              </motion.h1>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="flex flex-wrap gap-4 text-white/90"
-              >
-                <span className="flex items-center">
-                  <FiCalendar className="mr-2" />
-                  {formatDate(event.date)}
-                </span>
-                <span className="flex items-center">
-                  <FiClock className="mr-2" />
-                  {formatTime(event.date)} - {formatTime(endTime)}
-                </span>
-                <span className="flex items-center">
-                  <FiMapPin className="mr-2" />
-                  {event.venue}
-                </span>
-              </motion.div>
-            </div>
-          </div>
+      {/* Event Header */}
+      <div className="glass-card mb-8">
+        <div className="p-6 md:p-8">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl md:text-4xl font-bold text-dark mb-4"
+          >
+            {event.title}
+          </motion.h1>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="flex flex-wrap gap-4 text-gray-600"
+          >
+            <span className="flex items-center">
+              <FiCalendar className="mr-2" />
+              {formatDate(event.date)}
+            </span>
+            <span className="flex items-center">
+              <FiClock className="mr-2" />
+              {formatTime(event.date)} - {formatTime(endTime)}
+            </span>
+            <span className="flex items-center">
+              <FiMapPin className="mr-2" />
+              {event.venue}
+            </span>
+          </motion.div>
         </div>
       </div>
 
@@ -534,32 +525,7 @@ const EventDetails = () => {
               </button>
             </div>
             
-            {/* Image Gallery */}
-            {(event.featured_image_1 || event.featured_image_2) && (
-              <div className="mt-8">
-                <h3 className="text-xl font-semibold mb-4 text-dark">Gallery</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {event.featured_image_1 && (
-                    <div className="relative h-48 md:h-64 overflow-hidden rounded-lg">
-                      <img 
-                        src={event.featured_image_1} 
-                        alt={`${event.title} gallery 1`} 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
-                      />
-                    </div>
-                  )}
-                  {event.featured_image_2 && (
-                    <div className="relative h-48 md:h-64 overflow-hidden rounded-lg">
-                      <img 
-                        src={event.featured_image_2} 
-                        alt={`${event.title} gallery 2`} 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+
             
             {/* Event Details */}
             <div className="mt-8">

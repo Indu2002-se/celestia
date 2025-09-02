@@ -223,128 +223,249 @@ const ViewBookings = () => {
         </div>
       </div>
 
-      {/* Bookings Table */}
-      <div className="glass-card">
-        {loading ? (
-          <div className="p-8 text-center">
-            <FiRefreshCw className="animate-spin text-4xl mx-auto mb-4 text-primary" />
-            <p>Loading bookings...</p>
-          </div>
-        ) : filteredBookings.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            <FiUsers className="text-4xl mx-auto mb-4" />
-            <p>No bookings found for the selected filter.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Customer</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Event</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Package</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Price</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Quantity</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredBookings.map((booking) => (
-                  <motion.tr
-                    key={booking.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="hover:bg-gray-50"
-                  >
-                    <td className="px-4 py-4">
-                      <div>
-                        <div className="font-medium text-gray-900">
-                          {booking.profiles?.full_name || booking.customer_name || 'N/A'}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {booking.profiles?.email || booking.customer_email || 'N/A'}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          Ref: {booking.reference_number}
-                        </div>
-                      </div>
-                    </td>
-                    
-                    <td className="px-4 py-4">
-                      <div>
-                        <div className="font-medium text-gray-900">
-                          {booking.events?.title || booking.event_title || 'N/A'}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {new Date(booking.events?.date || booking.event_date).toLocaleDateString()}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {booking.events?.venue || booking.event_location || 'N/A'}
-                        </div>
-                      </div>
-                    </td>
-                    
-                    <td className="px-4 py-4">
-                      {getPackageBadge(booking.package_type)}
-                    </td>
-                    
-                    <td className="px-4 py-4">
-                      {getPriceBadge(booking.package_type)}
-                    </td>
-                    
-                    <td className="px-4 py-4 text-center">
-                      <span className="font-medium">{booking.quantity || booking.tickets_count}</span>
-                    </td>
-                    
-                    <td className="px-4 py-4">
-                      <span className="font-bold text-lg text-primary">
-                        LKR {parseFloat(booking.total_amount || booking.total_price).toFixed(2)}
-                      </span>
-                    </td>
-                    
-                    <td className="px-4 py-4">
-                      {getStatusBadge(booking.status, booking.package_type)}
-                    </td>
-                    
-                    <td className="px-4 py-4">
-                      <div className="flex gap-2">
-                        {(!booking.status || booking.status === 'pending') ? (
-                          <button
-                            onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
-                            disabled={updating}
-                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
-                            title="Confirm Booking"
-                          >
-                            <FiCheck />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleStatusUpdate(booking.id, 'pending')}
-                            disabled={updating}
-                            className="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50"
-                            title="Mark as Pending"
-                          >
-                            <FiX />
-                          </button>
-                        )}
+      {/* Bookings Tables - Separated by Package Type */}
+      {loading ? (
+        <div className="glass-card p-8 text-center">
+          <FiRefreshCw className="animate-spin text-4xl mx-auto mb-4 text-primary" />
+          <p>Loading bookings...</p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {/* Movie Only Bookings Table */}
+          <div className="glass-card">
+            <div className="p-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-blue-600 flex items-center gap-2">
+                <FiPackage /> Movie Only Bookings (LKR 300.00)
+                <span className="text-sm font-normal text-gray-500">
+                  ({bookings.filter(b => b.package_type === 'movie').length} bookings)
+                </span>
+              </h2>
+            </div>
+            
+            {bookings.filter(b => b.package_type === 'movie').length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                <FiUsers className="text-4xl mx-auto mb-4" />
+                <p>No Movie Only bookings found.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-blue-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Customer</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Event</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Quantity</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {bookings.filter(b => b.package_type === 'movie').map((booking) => (
+                      <motion.tr
+                        key={booking.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="hover:bg-gray-50"
+                      >
+                        <td className="px-4 py-4">
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {booking.profiles?.full_name || booking.customer_name || 'N/A'}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {booking.profiles?.email || booking.customer_email || 'N/A'}
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              Ref: {booking.reference_number}
+                            </div>
+                          </div>
+                        </td>
                         
-                        <button
-                          className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                          title="View Details"
-                        >
-                          <FiEye />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
+                        <td className="px-4 py-4">
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {booking.events?.title || booking.event_title || 'N/A'}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {new Date(booking.events?.date || booking.event_date).toLocaleDateString()}
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              {booking.events?.venue || booking.event_location || 'N/A'}
+                            </div>
+                          </div>
+                        </td>
+                        
+                        <td className="px-4 py-4 text-center">
+                          <span className="font-medium">{booking.quantity || booking.tickets_count}</span>
+                        </td>
+                        
+                        <td className="px-4 py-4">
+                          <span className="font-bold text-lg text-blue-600">
+                            LKR {parseFloat(booking.total_amount || booking.total_price).toFixed(2)}
+                          </span>
+                        </td>
+                        
+                        <td className="px-4 py-4">
+                          {getStatusBadge(booking.status, booking.package_type)}
+                        </td>
+                        
+                        <td className="px-4 py-4">
+                          <div className="flex gap-2">
+                            {(!booking.status || booking.status === 'pending') ? (
+                              <button
+                                onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
+                                disabled={updating}
+                                className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                                title="Confirm Booking"
+                              >
+                                <FiCheck />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleStatusUpdate(booking.id, 'pending')}
+                                disabled={updating}
+                                className="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50"
+                                title="Mark as Pending"
+                              >
+                                <FiX />
+                              </button>
+                            )}
+                            
+                            <button
+                              className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                              title="View Details"
+                            >
+                              <FiEye />
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+
+          {/* Movie + Photobooth Bookings Table */}
+          <div className="glass-card">
+            <div className="p-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-purple-600 flex items-center gap-2">
+                <FiPackage /> Movie + Photobooth Bookings (LKR 350.00)
+                <span className="text-sm font-normal text-gray-500">
+                  ({bookings.filter(b => b.package_type === 'movie+photobooth').length} bookings)
+                </span>
+              </h2>
+            </div>
+            
+            {bookings.filter(b => b.package_type === 'movie+photobooth').length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                <FiUsers className="text-4xl mx-auto mb-4" />
+                <p>No Movie + Photobooth bookings found.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-purple-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Customer</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Event</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Quantity</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {bookings.filter(b => b.package_type === 'movie+photobooth').map((booking) => (
+                      <motion.tr
+                        key={booking.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="hover:bg-gray-50"
+                      >
+                        <td className="px-4 py-4">
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {booking.profiles?.full_name || booking.customer_name || 'N/A'}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {booking.profiles?.email || booking.customer_email || 'N/A'}
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              Ref: {booking.reference_number}
+                            </div>
+                          </div>
+                        </td>
+                        
+                        <td className="px-4 py-4">
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {booking.events?.title || booking.event_title || 'N/A'}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {new Date(booking.events?.date || booking.event_date).toLocaleDateString()}
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              {booking.events?.venue || booking.event_location || 'N/A'}
+                            </div>
+                          </div>
+                        </td>
+                        
+                        <td className="px-4 py-4 text-center">
+                          <span className="font-medium">{booking.quantity || booking.tickets_count}</span>
+                        </td>
+                        
+                        <td className="px-4 py-4">
+                          <span className="font-bold text-lg text-purple-600">
+                            LKR {parseFloat(booking.total_amount || booking.total_price).toFixed(2)}
+                          </span>
+                        </td>
+                        
+                        <td className="px-4 py-4">
+                          {getStatusBadge(booking.status, booking.package_type)}
+                        </td>
+                        
+                        <td className="px-4 py-4">
+                          <div className="flex gap-2">
+                            {(!booking.status || booking.status === 'pending') ? (
+                              <button
+                                onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
+                                disabled={updating}
+                                className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                                title="Confirm Booking"
+                              >
+                                <FiCheck />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleStatusUpdate(booking.id, 'pending')}
+                                disabled={updating}
+                                className="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50"
+                                title="Mark as Pending"
+                              >
+                                <FiX />
+                              </button>
+                            )}
+                            
+                            <button
+                              className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                              title="View Details"
+                            >
+                              <FiEye />
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">

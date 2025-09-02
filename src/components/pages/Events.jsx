@@ -341,11 +341,11 @@ const Events = () => {
               transition={{ duration: 0.3 }}
               className="glass-card overflow-hidden flex flex-col h-full"
             >
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative overflow-hidden">
                 <img 
                   src={event.image_url} 
                   alt={event.title} 
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  className="w-full h-auto max-h-64 object-contain transition-transform duration-300 hover:scale-105"
                 />
                 <div className="absolute bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent w-full p-4">
                   <div className="text-white font-semibold flex items-center">

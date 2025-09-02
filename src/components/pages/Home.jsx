@@ -13,13 +13,13 @@ const Home = () => {
       try {
         setLoading(true);
         
-        // Fetch real data from Supabase - get the main movie festival event and first 2 show events
+        // Fetch real data from Supabase - get all 4 movie events
         const { data, error } = await supabase
           .from('events')
           .select('*')
           .eq('is_published', true)
-          .order('date', { ascending: true })
-          .limit(3);
+          .eq('category', 'movie')
+          .order('date', { ascending: true });
         
         if (error) throw error;
 
@@ -187,7 +187,7 @@ const Home = () => {
       {/* Featured Events */}
       <section className="celestia-container mb-20">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-dark">Featured Events</h2>
+          <h2 className="text-3xl font-bold text-dark">🎬 Celestia Sci-Fi Cinema</h2>
           <Link to="/events" className="flex items-center text-primary hover:text-primary/80 transition-colors">
             View All <FiArrowRight className="ml-1" />
           </Link>
@@ -198,7 +198,7 @@ const Home = () => {
             <p className="text-gray-600">Loading events...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredEvents.map((event) => (
               <motion.div
                 key={event.id}
@@ -207,11 +207,11 @@ const Home = () => {
                 transition={{ duration: 0.5 }}
                 className="glass-card overflow-hidden"
               >
-                <div className="relative h-48">
+                <div className="relative">
                   <img 
                     src={getEventImage(event)} 
                     alt={event.title} 
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="w-full h-auto max-h-80 object-contain transition-transform duration-300 hover:scale-105"
                   />
                 </div>
                 <div className="p-6">

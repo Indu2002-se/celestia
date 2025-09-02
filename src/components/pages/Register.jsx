@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../../supabaseClient';
-import { FiMail, FiLock, FiUser, FiAlertCircle, FiUserPlus } from 'react-icons/fi';
+import { FiMail, FiLock, FiUser, FiAlertCircle, FiUserPlus, FiHash, FiCalendar } from 'react-icons/fi';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,6 +11,8 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    studentId: '',
+    batchNo: '',
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -62,6 +64,14 @@ const Register = () => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
     
+    if (!formData.studentId.trim()) {
+      newErrors.studentId = 'Student ID is required';
+    }
+    
+    if (!formData.batchNo.trim()) {
+      newErrors.batchNo = 'Batch number is required';
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -85,7 +95,9 @@ const Register = () => {
         password: formData.password,
         options: {
           data: {
-            full_name: formData.fullName
+            full_name: formData.fullName,
+            student_id: formData.studentId,
+            batch_no: formData.batchNo
           },
           emailRedirectTo: `${window.location.origin}/auth/callback`
         }
@@ -178,6 +190,46 @@ const Register = () => {
               </div>
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
+            </div>
+            
+            <div className="mb-4">
+              <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 mb-1">
+                Student ID
+              </label>
+              <div className="relative">
+                <FiHash className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  id="studentId"
+                  name="studentId"
+                  value={formData.studentId}
+                  onChange={handleInputChange}
+                  className={`w-full pl-10 pr-4 py-2 rounded-lg border ${errors.studentId ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
+                />
+              </div>
+              {errors.studentId && (
+                <p className="text-red-500 text-sm mt-1">{errors.studentId}</p>
+              )}
+            </div>
+            
+            <div className="mb-4">
+              <label htmlFor="batchNo" className="block text-sm font-medium text-gray-700 mb-1">
+                Batch Number
+              </label>
+              <div className="relative">
+                <FiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  id="batchNo"
+                  name="batchNo"
+                  value={formData.batchNo}
+                  onChange={handleInputChange}
+                  className={`w-full pl-10 pr-4 py-2 rounded-lg border ${errors.batchNo ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
+                />
+              </div>
+              {errors.batchNo && (
+                <p className="text-red-500 text-sm mt-1">{errors.batchNo}</p>
               )}
             </div>
             
