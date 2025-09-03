@@ -22,6 +22,9 @@ const Booking = () => {
     fullName: '',
     email: '',
     phone: '',
+    studentId: '',
+    section: '',
+    batchNo: '',
     specialRequirements: ''
   });
   const [errors, setErrors] = useState({});
@@ -146,6 +149,18 @@ const Booking = () => {
       newErrors.phone = 'Phone number is required';
     }
     
+    if (!formData.studentId.trim()) {
+      newErrors.studentId = 'Student ID is required';
+    }
+    
+    if (!formData.section.trim()) {
+      newErrors.section = 'Section is required';
+    }
+    
+    if (!formData.batchNo.trim()) {
+      newErrors.batchNo = 'Batch number is required';
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -177,6 +192,9 @@ const Booking = () => {
         customer_name: formData.fullName,
         customer_email: formData.email,
         customer_phone: formData.phone,
+        student_id: formData.studentId,
+        section: formData.section,
+        batch_no: formData.batchNo,
         special_requirements: formData.specialRequirements || null,
         email_sent: false
       }).select().single();
@@ -372,6 +390,60 @@ const Booking = () => {
                   />
                   {errors.phone && (
                     <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                  )}
+                </div>
+                
+                <div className="col-span-2 md:col-span-1">
+                  <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 mb-1">
+                    Student ID*
+                  </label>
+                  <input
+                    type="text"
+                    id="studentId"
+                    name="studentId"
+                    value={formData.studentId}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 rounded-lg border ${errors.studentId ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
+                    placeholder="e.g., 2023/CS/001"
+                  />
+                  {errors.studentId && (
+                    <p className="text-red-500 text-sm mt-1">{errors.studentId}</p>
+                  )}
+                </div>
+                
+                <div className="col-span-2 md:col-span-1">
+                  <label htmlFor="section" className="block text-sm font-medium text-gray-700 mb-1">
+                    Section*
+                  </label>
+                  <input
+                    type="text"
+                    id="section"
+                    name="section"
+                    value={formData.section}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 rounded-lg border ${errors.section ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
+                    placeholder="e.g., A, B, C"
+                  />
+                  {errors.section && (
+                    <p className="text-red-500 text-sm mt-1">{errors.section}</p>
+                  )}
+                </div>
+                
+                <div className="col-span-2 md:col-span-1">
+                  <label htmlFor="batchNo" className="block text-sm font-medium text-gray-700 mb-1">
+                    Batch Number*
+                  </label>
+                  <input
+                    type="text"
+                    id="batchNo"
+                    name="batchNo"
+                    value={formData.batchNo}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 rounded-lg border ${errors.batchNo ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
+                    placeholder="e.g., 2023, 2024"
+                  />
+                  {errors.batchNo && (
+                    <p className="text-red-500 text-sm mt-1">{errors.batchNo}</p>
                   )}
                 </div>
                 

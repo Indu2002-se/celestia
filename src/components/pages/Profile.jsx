@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../../supabaseClient';
-import { FiUser, FiMail, FiCalendar, FiEdit2, FiLogOut, FiCheck, FiX, FiMapPin, FiClock, FiDollarSign } from 'react-icons/fi';
+import { FiUser, FiMail, FiCalendar, FiEdit2, FiLogOut, FiCheck, FiX, FiMapPin, FiClock, FiDollarSign, FiCreditCard, FiCopy } from 'react-icons/fi';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -178,6 +178,23 @@ const Profile = () => {
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
+    }
+  };
+
+  const copyToClipboard = async (text, label) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert(`${label} copied to clipboard!`);
+    } catch (error) {
+      console.error('Failed to copy:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert(`${label} copied to clipboard!`);
     }
   };
 
@@ -367,6 +384,85 @@ const Profile = () => {
               )}
             </div>
           </motion.div>
+
+          {/* Bank Account Details */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="glass-card p-6 mt-6"
+          >
+            <div className="flex items-center mb-6">
+              <FiCreditCard className="text-primary mr-3" size={24} />
+              <h2 className="text-2xl font-semibold text-dark">Payment Information</h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <p className="text-sm text-blue-800 font-medium mb-3">For event payments, please use the following bank account details:</p>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Account Number</p>
+                      <p className="font-mono text-lg font-semibold">{profile?.bank_account_number || '108852549699'}</p>
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(profile?.bank_account_number || '108852549699', 'Account Number')}
+                      className="text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      <FiCopy size={18} />
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Account Holder</p>
+                      <p className="font-semibold">{profile?.bank_account_holder || 'B D S Mendis'}</p>
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(profile?.bank_account_holder || 'B D S Mendis', 'Account Holder')}
+                      className="text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      <FiCopy size={18} />
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Bank Name</p>
+                      <p className="font-semibold">{profile?.bank_name || 'Sampath Bank'}</p>
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(profile?.bank_name || 'Sampath Bank', 'Bank Name')}
+                      className="text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      <FiCopy size={18} />
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Branch</p>
+                      <p className="font-semibold">{profile?.bank_branch || 'Negombo 2'}</p>
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(profile?.bank_branch || 'Negombo 2', 'Branch')}
+                      className="text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      <FiCopy size={18} />
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Important:</strong> Please include your booking reference number in the payment description when making payments.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
         
         {/* Booking History */}
@@ -394,12 +490,18 @@ const Profile = () => {
                           <p>{booking.events.venue}</p>
                         </div>
                       </div>
-                      <div className="mt-2 md:mt-0 flex flex-col items-start md:items-end">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                        </span>
-                        <p className="text-gray-600 text-sm mt-1">Reference: {booking.reference_number}</p>
-                      </div>
+                                             <div className="mt-2 md:mt-0 flex flex-col items-start md:items-end">
+                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                           booking.status === 'confirmed' 
+                             ? 'bg-green-100 text-green-800' 
+                             : booking.status === 'pending'
+                             ? 'bg-yellow-100 text-yellow-800'
+                             : 'bg-red-100 text-red-800'
+                         }`}>
+                           {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                         </span>
+                         <p className="text-gray-600 text-sm mt-1">Reference: {booking.reference_number}</p>
+                       </div>
                     </div>
                     
                     <div className="border-t border-gray-200 mt-3 pt-3 flex flex-col sm:flex-row justify-between">
