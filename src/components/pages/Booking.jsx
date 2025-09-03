@@ -404,7 +404,7 @@ const Booking = () => {
                     value={formData.studentId}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-2 rounded-lg border ${errors.studentId ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
-                    placeholder="e.g., 2023/CS/001"
+                    placeholder="e.g., GM/HDCSE/01/01"
                   />
                   {errors.studentId && (
                     <p className="text-red-500 text-sm mt-1">{errors.studentId}</p>
@@ -422,7 +422,7 @@ const Booking = () => {
                     value={formData.section}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-2 rounded-lg border ${errors.section ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
-                    placeholder="e.g., A, B, C"
+                    placeholder="e.g., SE,BM,.."
                   />
                   {errors.section && (
                     <p className="text-red-500 text-sm mt-1">{errors.section}</p>
@@ -440,7 +440,7 @@ const Booking = () => {
                     value={formData.batchNo}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-2 rounded-lg border ${errors.batchNo ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
-                    placeholder="e.g., 2023, 2024"
+                   
                   />
                   {errors.batchNo && (
                     <p className="text-red-500 text-sm mt-1">{errors.batchNo}</p>

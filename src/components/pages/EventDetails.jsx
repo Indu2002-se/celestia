@@ -14,6 +14,7 @@ const EventDetails = () => {
   const [selectedPackage, setSelectedPackage] = useState('movie'); // 'movie' or 'movie+photobooth'
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [bookingDetails, setBookingDetails] = useState(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -309,6 +310,27 @@ const EventDetails = () => {
         } catch (emailError) {
           console.error('Failed to send confirmation email:', emailError);
         }
+        
+        // Show success message briefly before navigating
+        setShowSuccessMessage(true);
+        setTimeout(() => {
+          // Navigate to confirmation page with booking details
+          navigate(`/confirmation/${data.id}`, {
+            state: {
+              event,
+              quantity: ticketQuantity,
+              formData,
+              booking: {
+                id: data.id,
+                reference_number: referenceNumber,
+                total_amount: totalPrice,
+                package_type: selectedPackage,
+                package_price: getSelectedPrice()
+              }
+            }
+          });
+        }, 2000);
+        
       } catch (error) {
         console.error('Error creating booking:', error);
         alert('There was an error creating your booking. Please try again.');
@@ -825,7 +847,7 @@ const EventDetails = () => {
                       value={formData.studentId}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-2 rounded-lg border ${errors.studentId ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
-                      placeholder="e.g., 2023/CS/001"
+                      placeholder="e.g., GM/HDCSE/01/01"
                     />
                     {errors.studentId && (
                       <p className="text-red-500 text-sm mt-1">{errors.studentId}</p>
@@ -843,7 +865,7 @@ const EventDetails = () => {
                       value={formData.section}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-2 rounded-lg border ${errors.section ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
-                      placeholder="e.g., A, B, C"
+                      placeholder="e.g., SE,BM,.."
                     />
                     {errors.section && (
                       <p className="text-red-500 text-sm mt-1">{errors.section}</p>
@@ -861,7 +883,7 @@ const EventDetails = () => {
                       value={formData.batchNo}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-2 rounded-lg border ${errors.batchNo ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-primary`}
-                      placeholder="e.g., 2023, 2024"
+
                     />
                     {errors.batchNo && (
                       <p className="text-red-500 text-sm mt-1">{errors.batchNo}</p>
@@ -899,6 +921,18 @@ const EventDetails = () => {
                   ? (submitting ? 'Processing...' : 'Confirm Booking') 
                   : 'Book Tickets'}
               </button>
+              
+              {showSuccessMessage && (
+                <div className="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg">
+                  <div className="flex items-center">
+                    <FiCheckCircle className="text-green-500 mr-2" />
+                    <div>
+                      <p className="text-green-800 font-medium">Booking Confirmed!</p>
+                      <p className="text-green-700 text-sm">Redirecting to confirmation page with bank details and PDF download...</p>
+                    </div>
+                  </div>
+                </div>
+              )}
               
               <div className="mt-4 text-sm text-gray-600">
                 <p>* Tickets are non-refundable</p>

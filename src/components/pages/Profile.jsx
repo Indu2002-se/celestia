@@ -490,7 +490,7 @@ const Profile = () => {
                           <p>{booking.events.venue}</p>
                         </div>
                       </div>
-                                             <div className="mt-2 md:mt-0 flex flex-col items-start md:items-end">
+                      <div className="mt-2 md:mt-0 flex flex-col items-start md:items-end">
                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                            booking.status === 'confirmed' 
                              ? 'bg-green-100 text-green-800' 
@@ -498,10 +498,10 @@ const Profile = () => {
                              ? 'bg-yellow-100 text-yellow-800'
                              : 'bg-red-100 text-red-800'
                          }`}>
-                           {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                         </span>
-                         <p className="text-gray-600 text-sm mt-1">Reference: {booking.reference_number}</p>
-                       </div>
+                          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                        </span>
+                        <p className="text-gray-600 text-sm mt-1">Reference: {booking.reference_number}</p>
+                      </div>
                     </div>
                     
                     <div className="border-t border-gray-200 mt-3 pt-3 flex flex-col sm:flex-row justify-between">
