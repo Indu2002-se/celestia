@@ -6,10 +6,9 @@ const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJI
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce',
-    redirectTo: `${window.location.origin}/auth/callback`
+    autoRefreshToken: false, // Disable auto refresh for admin sessions
+    persistSession: false,   // Don't persist sessions to avoid token issues
+    detectSessionInUrl: false,
+    flowType: 'pkce'
   }
 }); 

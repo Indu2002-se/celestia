@@ -1,80 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FiCheck, FiX, FiEye, FiFilter, FiRefreshCw, FiPackage, FiUsers, FiDollarSign, FiMail } from 'react-icons/fi';
+import { FiCheck, FiX, FiEye, FiRefreshCw, FiPackage, FiUsers } from 'react-icons/fi';
 import { supabase } from '../../../supabaseClient';
-import { sendBookingConfirmationEmail, initializeEmailJS } from '../../../utils/emailjsService';
+// EmailJS removed - not needed
 
 const ViewBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, pending, confirmed, movie, movie+photobooth
   const [updating, setUpdating] = useState(false);
-  const [sendingEmail, setSendingEmail] = useState(false);
-  const [emailStatus, setEmailStatus] = useState({});
+  // Email functionality removed
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
 
   useEffect(() => {
     fetchBookings();
-    // Initialize EmailJS
-    try {
-      initializeEmailJS();
-    } catch (error) {
-      console.error('Failed to initialize EmailJS:', error);
-    }
   }, []);
 
   const fetchBookings = async () => {
     try {
       setLoading(true);
       
-      // First try to get bookings with joined data
-      let { data, error } = await supabase
+      console.log('🔍 Fetching bookings...');
+      console.log('🔑 Admin session:', localStorage.getItem('adminSession'));
+      
+      // Use direct select to avoid joined query issues
+      const { data, error } = await supabase
         .from('bookings')
-        .select(`
-          *,
-          events (
-            title,
-            date,
-            venue
-          ),
-          profiles (
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
-
+      
+      console.log('📊 Query result:', { data, error });
+      
       if (error) {
-        console.log('Joined query failed, trying direct select:', error);
-        // Fallback to direct select if joined query fails
-        const { data: directData, error: directError } = await supabase
-          .from('bookings')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (directError) throw directError;
-        data = directData;
+        console.error('❌ Database error:', error);
+        throw error;
       }
+
+      console.log('✅ Raw bookings data:', data);
 
       // Process the data to ensure consistent format
       const processedBookings = (data || []).map(booking => ({
         ...booking,
-        // Use joined data if available, otherwise use direct data
-        events: booking.events || {
+        // Ensure consistent data structure
+        events: {
           title: booking.event_title,
           date: booking.event_date,
           venue: booking.event_location
         },
-        profiles: booking.profiles || {
+        profiles: {
           full_name: booking.customer_name,
           email: booking.customer_email
         }
       }));
 
+      console.log('🔄 Processed bookings:', processedBookings);
       setBookings(processedBookings);
     } catch (error) {
-      console.error('Error fetching bookings:', error);
+      console.error('❌ Error fetching bookings:', error);
     } finally {
       setLoading(false);
     }
@@ -97,10 +80,7 @@ const ViewBookings = () => {
           : booking
       ));
 
-      // If confirming booking, send confirmation email
-      if (newStatus === 'confirmed') {
-        await sendConfirmationEmail(bookingId);
-      }
+      // Booking status updated successfully
 
       console.log(`Booking ${bookingId} status updated to ${newStatus}`);
     } catch (error) {
@@ -121,99 +101,7 @@ const ViewBookings = () => {
     setShowBookingModal(false);
   };
 
-  const sendConfirmationEmail = async (bookingId) => {
-    try {
-      setSendingEmail(true);
-      setEmailStatus(prev => ({ ...prev, [bookingId]: 'sending' }));
-
-      // Find the booking data
-      const booking = bookings.find(b => b.id === bookingId);
-      if (!booking) {
-        throw new Error('Booking not found');
-      }
-
-      // Update user profile with booking information
-      try {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: booking.user_id,
-            full_name: booking.customer_name,
-            email: booking.customer_email,
-            phone: booking.customer_phone,
-            student_id: booking.student_id,
-            section: booking.section,
-            batch_no: booking.batch_no,
-            updated_at: new Date().toISOString()
-          });
-
-        if (profileError) {
-          console.warn('Failed to update user profile:', profileError);
-        } else {
-          console.log('User profile updated successfully');
-        }
-      } catch (profileError) {
-        console.warn('Error updating user profile:', profileError);
-      }
-
-      // Prepare email data
-      const emailData = {
-        booking_id: booking.id,
-        email: booking.customer_email,
-        name: booking.customer_name,
-        event_title: booking.events?.title || booking.event_title,
-        event_date: booking.events?.date || booking.event_date,
-        event_location: booking.events?.venue || booking.event_location,
-        quantity: booking.tickets_count,
-        reference_number: booking.reference_number,
-        total_amount: booking.total_price,
-        package_type: booking.package_type || 'movie',
-        package_price: booking.package_price || 300,
-        student_id: booking.student_id,
-        section: booking.section,
-        batch_no: booking.batch_no,
-        phone: booking.customer_phone,
-        special_requirements: booking.special_requirements
-      };
-
-      // Send email via EmailJS
-      const emailResponse = await sendBookingConfirmationEmail(emailData);
-
-      // Check if EmailJS is configured
-      if (!emailResponse.configured) {
-        setEmailStatus(prev => ({ ...prev, [bookingId]: 'not_configured' }));
-        return;
-      }
-
-      // Update booking to mark email as sent only if email was actually sent
-      if (emailResponse.success) {
-        const { error: updateError } = await supabase
-          .from('bookings')
-          .update({ email_sent: true })
-          .eq('id', bookingId);
-
-        if (updateError) {
-          console.warn('Failed to update email_sent status:', updateError);
-        }
-
-        setEmailStatus(prev => ({ ...prev, [bookingId]: 'sent' }));
-        console.log('? Confirmation email sent successfully:', emailResponse);
-
-        // Show success message
-        console.log(`Booking confirmed and confirmation email sent to ${booking.customer_email}`);
-      } else {
-        setEmailStatus(prev => ({ ...prev, [bookingId]: 'error' }));
-        console.log(`Booking confirmed but failed to send email: ${emailResponse.message}`);
-      }
-
-    } catch (error) {
-      console.error('❌ Error sending confirmation email:', error);
-      setEmailStatus(prev => ({ ...prev, [bookingId]: 'error' }));
-      console.log(`Booking confirmed but failed to send email: ${error.message}`);
-    } finally {
-      setSendingEmail(false);
-    }
-  };
+  // Email functionality removed - not needed
 
   const getFilteredBookings = () => {
     switch (filter) {
@@ -238,26 +126,6 @@ const ViewBookings = () => {
     }
     
     return <span className={`${baseClasses} bg-yellow-100 text-yellow-800`}>⏳ Pending</span>;
-  };
-
-  const getPackageBadge = (packageType) => {
-    const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-    
-    if (packageType === 'movie+photobooth') {
-      return <span className={`${baseClasses} bg-purple-100 text-purple-800`}>🎬 + 📸 Movie + Photobooth</span>;
-    }
-    
-    return <span className={`${baseClasses} bg-blue-100 text-blue-800`}>🎬 Movie Only</span>;
-  };
-
-  const getPriceBadge = (packageType) => {
-    const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-    
-    if (packageType === 'movie+photobooth') {
-      return <span className={`${baseClasses} bg-green-100 text-green-800`}>LKR 350.00</span>;
-    }
-    
-    return <span className={`${baseClasses} bg-blue-100 text-blue-800`}>LKR 300.00</span>;
   };
 
   const filteredBookings = getFilteredBookings();
@@ -342,6 +210,16 @@ const ViewBookings = () => {
             <FiPackage /> Movie + Photobooth ({bookings.filter(b => b.package_type === 'movie+photobooth').length})
           </button>
         </div>
+      </div>
+
+      {/* Debug Info */}
+      <div className="mb-4 p-4 bg-gray-100 rounded-lg">
+        <h3 className="font-semibold mb-2">Debug Information:</h3>
+        <p><strong>Total Bookings:</strong> {bookings.length}</p>
+        <p><strong>Loading:</strong> {loading ? 'Yes' : 'No'}</p>
+        <p><strong>Admin Session:</strong> {localStorage.getItem('adminSession') ? 'Present' : 'Missing'}</p>
+        <p><strong>Filter:</strong> {filter}</p>
+        <p><strong>Filtered Bookings:</strong> {filteredBookings.length}</p>
       </div>
 
       {/* Bookings Tables - Separated by Package Type */}
@@ -442,22 +320,11 @@ const ViewBookings = () => {
                             {(!booking.status || booking.status === 'pending') ? (
                               <button
                                 onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
-                                disabled={updating || sendingEmail}
-                                className={`p-2 text-white rounded-lg disabled:opacity-50 flex items-center gap-1 ${
-                                  emailStatus[booking.id] === 'sending' 
-                                    ? 'bg-blue-500 cursor-wait' 
-                                    : 'bg-green-500 hover:bg-green-600'
-                                }`}
-                                title={emailStatus[booking.id] === 'sending' ? 'Sending Email...' : 'Confirm Booking & Send Email'}
+                                disabled={updating}
+                                className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                                title="Confirm Booking"
                               >
-                                {emailStatus[booking.id] === 'sending' ? (
-                                  <>
-                                    <FiMail className="animate-pulse" />
-                                    <span className="text-xs">Sending...</span>
-                                  </>
-                                ) : (
-                                  <FiCheck />
-                                )}
+                                <FiCheck />
                               </button>
                             ) : (
                               <button
@@ -470,26 +337,6 @@ const ViewBookings = () => {
                               </button>
                             )}
                             
-                            {booking.status === 'confirmed' && emailStatus[booking.id] === 'sent' && (
-                              <div className="flex items-center text-green-600 text-xs">
-                                <FiMail className="mr-1" />
-                                Email Sent
-                              </div>
-                            )}
-                            
-                            {booking.status === 'confirmed' && emailStatus[booking.id] === 'error' && (
-                              <div className="flex items-center text-red-600 text-xs">
-                                <FiMail className="mr-1" />
-                                Email Failed
-                              </div>
-                            )}
-                            
-                            {booking.status === 'confirmed' && emailStatus[booking.id] === 'not_configured' && (
-                              <div className="flex items-center text-orange-600 text-xs">
-                                <FiMail className="mr-1" />
-                                EmailJS Not Setup
-                              </div>
-                            )}
                             
                             <button
                               onClick={() => handleViewBookingDetails(booking)}
@@ -598,22 +445,11 @@ const ViewBookings = () => {
                             {(!booking.status || booking.status === 'pending') ? (
                               <button
                                 onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
-                                disabled={updating || sendingEmail}
-                                className={`p-2 text-white rounded-lg disabled:opacity-50 flex items-center gap-1 ${
-                                  emailStatus[booking.id] === 'sending' 
-                                    ? 'bg-blue-500 cursor-wait' 
-                                    : 'bg-green-500 hover:bg-green-600'
-                                }`}
-                                title={emailStatus[booking.id] === 'sending' ? 'Sending Email...' : 'Confirm Booking & Send Email'}
+                                disabled={updating}
+                                className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                                title="Confirm Booking"
                               >
-                                {emailStatus[booking.id] === 'sending' ? (
-                                  <>
-                                    <FiMail className="animate-pulse" />
-                                    <span className="text-xs">Sending...</span>
-                                  </>
-                                ) : (
-                                  <FiCheck />
-                                )}
+                                <FiCheck />
                               </button>
                             ) : (
                               <button
@@ -626,26 +462,6 @@ const ViewBookings = () => {
                               </button>
                             )}
                             
-                            {booking.status === 'confirmed' && emailStatus[booking.id] === 'sent' && (
-                              <div className="flex items-center text-green-600 text-xs">
-                                <FiMail className="mr-1" />
-                                Email Sent
-                              </div>
-                            )}
-                            
-                            {booking.status === 'confirmed' && emailStatus[booking.id] === 'error' && (
-                              <div className="flex items-center text-red-600 text-xs">
-                                <FiMail className="mr-1" />
-                                Email Failed
-                              </div>
-                            )}
-                            
-                            {booking.status === 'confirmed' && emailStatus[booking.id] === 'not_configured' && (
-                              <div className="flex items-center text-orange-600 text-xs">
-                                <FiMail className="mr-1" />
-                                EmailJS Not Setup
-                              </div>
-                            )}
                             
                             <button
                               onClick={() => handleViewBookingDetails(booking)}
