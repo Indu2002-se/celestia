@@ -30,7 +30,7 @@ const Booking = () => {
   const [errors, setErrors] = useState({});
   const [user, setUser] = useState(null);
 
-  // Get current user
+  // Get current user (optional for guest booking)
   useEffect(() => {
     const getCurrentUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -58,6 +58,7 @@ const Booking = () => {
           }));
         }
       }
+      // If no user session, form will remain empty for guest booking
     };
     
     getCurrentUser();
@@ -336,6 +337,15 @@ const Booking = () => {
         <div className="w-full lg:w-2/3">
           <div className="glass-card p-6 md:p-8">
             <h2 className="text-xl font-semibold mb-6">Your Information</h2>
+            
+            {!user && (
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-blue-800 text-sm">
+                  <strong>Guest Booking:</strong> You're booking as a guest. No account required! 
+                  Your booking will be confirmed via email.
+                </p>
+              </div>
+            )}
             
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

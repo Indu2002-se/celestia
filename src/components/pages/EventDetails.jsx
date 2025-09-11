@@ -411,54 +411,7 @@ const EventDetails = () => {
     );
   }
 
-  // Check if user is authenticated
-  if (!user) {
-    return (
-      <div className="celestia-container my-10">
-        <div className="glass-card p-8 text-center">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-4">
-              🎬 Join Celestia Movie Festival
-            </h2>
-            <p className="text-lg text-gray-600 mb-6">
-              Create your account to book tickets for this amazing event!
-            </p>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <h3 className="text-lg font-semibold text-blue-800 mb-2">✨ What You'll Get:</h3>
-              <ul className="text-blue-700 space-y-1">
-                <li>• Access to exclusive movie screenings</li>
-                <li>• Photobooth packages with soft copy photos</li>
-                <li>• Complimentary popcorn and refreshments</li>
-                <li>• Professional event management</li>
-              </ul>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/register"
-                className="btn-primary px-8 py-3 text-lg"
-              >
-                Create Account
-              </Link>
-              <Link
-                to="/login"
-                className="btn-secondary px-8 py-3 text-lg"
-              >
-                Sign In
-              </Link>
-            </div>
-            
-            <p className="text-sm text-gray-500 mt-4">
-              Already have an account? Sign in to book your tickets!
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Guest booking is now allowed - no authentication check needed
 
   // Calculate end time (assuming events are 3 hours long if not specified)
   const eventDate = new Date(event.date);
@@ -921,6 +874,14 @@ const EventDetails = () => {
                   ? (submitting ? 'Processing...' : 'Confirm Booking') 
                   : 'Book Tickets'}
               </button>
+              
+              {!user && (
+                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-blue-800 text-sm text-center">
+                    <strong>Guest Booking Available!</strong> You can book tickets without creating an account.
+                  </p>
+                </div>
+              )}
               
               {showSuccessMessage && (
                 <div className="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg">

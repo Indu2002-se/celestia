@@ -59,18 +59,18 @@ function App() {
             <Route path="/email-confirmation" element={<EmailConfirmation />} />
             <Route path="/auth/callback" element={<EmailConfirmation />} />
             
-            {/* Protected User Routes */}
+            {/* Booking Routes - Now accessible to guests */}
             <Route 
               path="/booking/:id" 
-              element={session ? <Booking /> : <Navigate to="/login" />} 
+              element={<Booking />} 
             />
             <Route 
               path="/checkout/:bookingId" 
-              element={session ? <Checkout /> : <Navigate to="/login" />} 
+              element={<Checkout />} 
             />
             <Route 
               path="/confirmation/:bookingId" 
-              element={session ? <Confirmation /> : <Navigate to="/login" />} 
+              element={<Confirmation />} 
             />
             <Route 
               path="/profile" 
