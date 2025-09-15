@@ -15,59 +15,123 @@ const eventDate = new Date();
 eventDate.setDate(eventDate.getDate() + 14);
 eventDate.setHours(19, 30, 0, 0); // 7:30 PM
 
-// Movie event data
-const movieEvent = {
-  title: "Interstellar: IMAX Re-Release",
-  description: "Experience Christopher Nolan's epic sci-fi masterpiece on the IMAX screen! Join us for a special screening of Interstellar with enhanced picture and sound quality.",
-  full_description: `Experience Christopher Nolan's epic sci-fi masterpiece on the IMAX screen!
-
-Join us for a special screening of Interstellar with enhanced picture and sound quality. This science fiction adventure follows a group of astronauts who travel through a wormhole near Saturn in search of a new home for humanity.
-
-Featuring breathtaking visuals, a mind-bending plot, and an emotional core, Interstellar is a must-see on the big screen. This special IMAX re-release enhances the already spectacular visuals and Hans Zimmer's iconic score.
-
-Don't miss this opportunity to experience one of the greatest sci-fi films of our time as it was meant to be seen!
-
-Runtime: 169 minutes
-Rating: PG-13
-Director: Christopher Nolan
-Cast: Matthew McConaughey, Anne Hathaway, Jessica Chastain, Michael Caine`,
-  date: eventDate.toISOString(),
-  end_time: new Date(eventDate.getTime() + (3 * 60 * 60 * 1000)).toISOString(), // Event lasts 3 hours
-  venue: "Celestia IMAX Theater",
+// Movie events data - Barbie, Head of State, and Damsel
+const movieEvents = [
+  {
+    title: "Barbie - Morning Show",
+    description: "Join us for the spectacular Barbie movie experience! A magical journey through Barbie Land.",
+    full_description: `Experience the magical world of Barbie in this spectacular cinematic adventure! Follow Barbie as she embarks on an extraordinary journey from her perfect Barbie Land to the real world. This visually stunning film features incredible performances, dazzling costumes, and a heartwarming story about self-discovery and empowerment. Perfect for audiences of all ages!`,
+    date: new Date('2025-09-15T10:00:00Z').toISOString(),
+    end_time: new Date('2025-09-15T12:00:00Z').toISOString(),
+    venue: "Celestia Cinema",
+    address: "123 Stargazer Avenue, Cosmic City",
+    price: 300.00,
+    capacity: 100,
+    image_url: "/Poster - BARBIE.jpg",
+    category: "movie",
+    organizer: "Celestia Cinema",
+    is_published: true
+  },
+  {
+    title: "Barbie - Afternoon Show",
+    description: "Join us for the spectacular Barbie movie experience! A magical journey through Barbie Land.",
+    full_description: `Experience the magical world of Barbie in this spectacular cinematic adventure! Follow Barbie as she embarks on an extraordinary journey from her perfect Barbie Land to the real world. This visually stunning film features incredible performances, dazzling costumes, and a heartwarming story about self-discovery and empowerment. Perfect for audiences of all ages!`,
+    date: new Date('2025-09-15T14:00:00Z').toISOString(),
+    end_time: new Date('2025-09-15T16:00:00Z').toISOString(),
+    venue: "Celestia Cinema",
+    address: "123 Stargazer Avenue, Cosmic City",
+    price: 300.00,
+    capacity: 100,
+    image_url: "/Poster - BARBIE.jpg",
+    category: "movie",
+    organizer: "Celestia Cinema",
+    is_published: true
+  },
+  {
+    title: "Head of State - Morning Show",
+    description: "A hilarious political comedy starring Chris Rock!",
+    full_description: `Get ready for laughs with this hilarious political comedy! Chris Rock stars as Mays Gilliam, a Washington D.C. alderman who becomes an unlikely presidential candidate. This satirical take on American politics delivers sharp wit, memorable characters, and plenty of laughs. A perfect blend of comedy and social commentary that will keep you entertained from start to finish!`,
+    date: new Date('2025-09-16T10:00:00Z').toISOString(),
+    end_time: new Date('2025-09-16T12:00:00Z').toISOString(),
+    venue: "Celestia Cinema",
+    address: "123 Stargazer Avenue, Cosmic City",
+    price: 300.00,
+    capacity: 100,
+    image_url: "/Heads of State.jpg",
+    category: "movie",
+    organizer: "Celestia Cinema",
+    is_published: true
+  },
+  {
+    title: "Head of State - Afternoon Show",
+    description: "A hilarious political comedy starring Chris Rock!",
+    full_description: `Get ready for laughs with this hilarious political comedy! Chris Rock stars as Mays Gilliam, a Washington D.C. alderman who becomes an unlikely presidential candidate. This satirical take on American politics delivers sharp wit, memorable characters, and plenty of laughs. A perfect blend of comedy and social commentary that will keep you entertained from start to finish!`,
+    date: new Date('2025-09-16T14:00:00Z').toISOString(),
+    end_time: new Date('2025-09-16T16:00:00Z').toISOString(),
+    venue: "Celestia Cinema",
+    address: "123 Stargazer Avenue, Cosmic City",
+    price: 300.00,
+    capacity: 100,
+    image_url: "/Heads of State.jpg",
+    category: "movie",
+    organizer: "Celestia Cinema",
+    is_published: true
+  },
+  {
+    title: "Damsel - Morning Show",
+    description: "A thrilling fantasy adventure starring Millie Bobby Brown!",
+    full_description: `Embark on an epic fantasy adventure with Damsel! Millie Bobby Brown delivers a powerful performance as a young woman who must fight for her survival in a dark fairy tale world. This gripping film combines stunning visuals, intense action sequences, and a compelling story about courage and resilience. A must-see for fantasy and adventure fans!`,
+    date: new Date('2025-09-17T10:00:00Z').toISOString(),
+    end_time: new Date('2025-09-17T12:00:00Z').toISOString(),
+    venue: "Celestia Cinema",
+    address: "123 Stargazer Avenue, Cosmic City",
+    price: 300.00,
+    capacity: 100,
+    image_url: "/Damsel Poster.jpg",
+    category: "movie",
+    organizer: "Celestia Cinema",
+    is_published: true
+  },
+  {
+    title: "Damsel - Afternoon Show",
+    description: "A thrilling fantasy adventure starring Millie Bobby Brown!",
+    full_description: `Embark on an epic fantasy adventure with Damsel! Millie Bobby Brown delivers a powerful performance as a young woman who must fight for her survival in a dark fairy tale world. This gripping film combines stunning visuals, intense action sequences, and a compelling story about courage and resilience. A must-see for fantasy and adventure fans!`,
+    date: new Date('2025-09-17T14:00:00Z').toISOString(),
+    end_time: new Date('2025-09-17T16:00:00Z').toISOString(),
+    venue: "Celestia Cinema",
   address: "123 Stargazer Avenue, Cosmic City",
-  price: 15.99,
-  capacity: 150,
-  image_url: "https://images.unsplash.com/photo-1596727147705-61a532a659bd?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-  featured_image_1: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-  featured_image_2: "https://images.unsplash.com/photo-1506003094589-53954a26283f?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+    price: 300.00,
+    capacity: 100,
+    image_url: "/Damsel Poster.jpg",
   category: "movie",
   organizer: "Celestia Cinema",
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString()
-};
+    is_published: true
+  }
+];
 
 // Function to seed the database
 async function seedMovieEvent() {
   try {
-    console.log('Adding movie event to Supabase...');
+    console.log('Adding movie events to Supabase...');
     
-    // Insert the event into the database
+    // Insert all events into the database
     const { data, error } = await supabase
       .from('events')
-      .insert([movieEvent])
+      .insert(movieEvents)
       .select();
     
     if (error) {
       throw error;
     }
     
-    console.log('Movie event added successfully!');
-    console.log('Event ID:', data[0].id);
-    console.log('Title:', data[0].title);
-    console.log('Date:', new Date(data[0].date).toLocaleString());
+    console.log('Movie events added successfully!');
+    console.log(`Added ${data.length} events:`);
+    data.forEach(event => {
+      console.log(`- ${event.title} (${new Date(event.date).toLocaleString()})`);
+    });
     
   } catch (error) {
-    console.error('Error adding movie event:', error.message);
+    console.error('Error adding movie events:', error.message);
   }
 }
 
